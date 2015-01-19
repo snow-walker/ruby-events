@@ -1,7 +1,7 @@
 class EventsController < ApplicationController
   #before_filter :authenticate_user!
   before_action :set_event, only: [:show, :edit, :update, :destroy, :accept_request, :reject_request]
-  before_action :event_owner!, only: [:edit, :update, :destroy]
+  before_action :event_owner!, only: [:edit, :update, :destroy, :accept, :reject]
   before_filter :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
   
   respond_to :html, :json
@@ -18,6 +18,7 @@ class EventsController < ApplicationController
   def show
     @event_owner = @event.event_owner(@event.organizer_id)
     @attendees = Event.show_accepted_attendees(@event.id)
+    @pending_requests = Event.pending_requests(@event.id)
     respond_with(@event)
   end
 
@@ -31,10 +32,11 @@ class EventsController < ApplicationController
 
   def join
     @attendance = Attendance.join_event(current_user.id, params[:event_id], 'request_sent')
-    #'Request Sent' if @attendance.save
+    @attendance.save
     #respond_with @attendance
+
      respond_to do |format|
-       format.html { redirect_to(events_path, :notice => 'Accepted Applicant') }
+       format.html { redirect_to(events_path, :notice => 'Request Sent') }
      end
   end
 
@@ -63,27 +65,38 @@ class EventsController < ApplicationController
   end
 
   def accept_request
+    @event = Event.find(params[:event_id])
     @attendance = Attendance.find_by(id: params[:attendance_id]) rescue nil
+    
+    #'Application Accepted' if @attendance.save
     @attendance.accept!
-    'Application Accepted' if @attendance.save
-    respond_with(@attendance)
+
+    redirect_to(@event)
   end
 
   def reject_request
+    @event = Event.find(params[:event_id])
     @attendance = Attendance.find_by(id: params[:attendance_id]) rescue nil
     @attendance.reject!
-    'Application Rejected' if @attendance.save
-    respond_with(@attendance)
+    #'Application Rejected' if @attendance.save
+    redirect_to(@event)
+
+     
+     #format.html { redirect_to @event, notice: 'Rejected.'}
   end
 
   private
     def set_event
       #@event = Event.find(params[:id])
-      @event =Event.friendly.find(params[:id])
+      if params[:event_id].present?
+        @event = Event.friendly.find(params[:event_id])
+      else
+        @event =Event.friendly.find(params[:id])
+      end
     end
 
     def event_params
-      params.require(:event).permit(:title, :start_date, :end_date, :location, :agenda, :address, :organizer_id, :all_tags)
+      params.require(:event).permit(:title, :start_date, :end_date, :location, :agenda, :address, :organizer_id, :all_tags, :user_id)
     end
 
     def event_owner!

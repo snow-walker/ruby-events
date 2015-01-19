@@ -3,13 +3,15 @@ class Attendance < ActiveRecord::Base
 	belongs_to :event
 
 	scope :accepted, -> {where(state: 'accepted')}
+	scope :pending, -> {where(state: 'request_sent')}
+	scope :rejected, -> {where(state: 'rejected')}
 
 
-	
 
 	#attr_accessor :state
 	include Workflow
-		workflow_column :state
+	
+	workflow_column :state
 
 	workflow do
 		state :request_sent do

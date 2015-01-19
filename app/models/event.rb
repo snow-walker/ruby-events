@@ -33,7 +33,7 @@ class Event < ActiveRecord::Base
 	end
 
 	def self.pending_requests(event_id)
-		Attendance.where(event_id: event_id, state: 'request_sent')
+		Attendance.pending.where(event_id: event_id)
 	end
   
 	def self.show_accepted_attendees(event_id)

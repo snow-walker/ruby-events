@@ -48,7 +48,7 @@
     <%= image_tag avatar_url(p.user) %>
     <%= p.user.email %>
     <%= link_to 'Accept', event_accept_request_path(:event_id => @event.id, :attendance_id => p.id), :class => "btn btn-success btn-small" %>
-    <%= link_to 'Reject', event_reject_request_link(:event_id => @event.id, :attendance_id => p.id), :class => "btn btn-danger btn-small" %>
+    <%= link_to 'Reject', event_reject_request_path(:event_id => @event.id, :attendance_id => p.id), :class => "btn btn-danger btn-small" %>
   <% end %>
 <% else %>
   <p> No Pending Requests for this </p>
