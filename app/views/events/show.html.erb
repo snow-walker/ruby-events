@@ -1,0 +1,47 @@
+<p id="notice"><%= notice %></p>
+<p>
+  <%= image_tag avatar_url(@event_owner) %>
+       <%= @event_owner.email %>
+</p>
+<p>
+  <strong>Title:</strong>
+  <%= @event.title %>
+</p>
+<p><strong>Tags:</strong>
+  <%=raw @event.tags.map(&:name).map { |t| link_to t, tag_path(t) }.join(', ') %><br/><br/>
+
+</p>
+<p>
+  <strong>Start date:</strong>
+  <%= @event.start_date %>
+</p>
+
+<p>
+  <strong>End date:</strong>
+  <%= @event.end_date %>
+</p>
+
+<p>
+  <strong>Location:</strong>
+  <%= @event.location %>
+</p>
+
+<p>
+  <strong>Agenda:</strong>
+  <%= @event.agenda %>
+</p>
+
+<p>
+  <strong>Address:</strong>
+  <%= @event.address %>
+</p>
+
+<p>
+  <strong>Organizer:</strong>
+  <%= @event.organizer_id %>
+</p>
+<p>
+  <%= link_to "Join", event_join_path(:event_id => @event.id), :class => "btn btn-success btn-small" %>
+</p>
+<%= link_to 'Edit', edit_event_path(@event) %> |
+<%= link_to 'Back', events_path %>
