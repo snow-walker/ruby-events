@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
   resources :events do
     get :join, to: 'events#join', as: :join
+    get :accept_request, to: 'events#accept_request', as: 'accept_request'
+    get :reject_request, to: 'events#reject_request', as: 'reject_request'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

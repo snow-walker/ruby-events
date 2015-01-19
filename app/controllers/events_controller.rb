@@ -1,6 +1,6 @@
 class EventsController < ApplicationController
   #before_filter :authenticate_user!
-  before_action :set_event, only: [:show, :edit, :update, :destroy]
+  before_action :set_event, only: [:show, :edit, :update, :destroy, :accept_request, :reject_request]
   before_action :event_owner!, only: [:edit, :update, :destroy]
   before_filter :authenticate_user!, only: [:new, :edit, :create, :update, :destroy]
   
@@ -17,6 +17,7 @@ class EventsController < ApplicationController
 
   def show
     @event_owner = @event.event_owner(@event.organizer_id)
+    @attendees = Event.show_accepted_attendees(@event.id)
     respond_with(@event)
   end
 
@@ -30,11 +31,11 @@ class EventsController < ApplicationController
 
   def join
     @attendance = Attendance.join_event(current_user.id, params[:event_id], 'request_sent')
-    'Request Sent' if @attendance.save
+    #'Request Sent' if @attendance.save
     #respond_with @attendance
-    respond_to do |format|
-      format.html { redirect_to(events_path, :notice => 'Accepted Applicant') }
-    end
+     respond_to do |format|
+       format.html { redirect_to(events_path, :notice => 'Accepted Applicant') }
+     end
   end
 
   def create
@@ -59,6 +60,20 @@ class EventsController < ApplicationController
   def destroy
     @event.destroy
     respond_with(@event)
+  end
+
+  def accept_request
+    @attendance = Attendance.find_by(id: params[:attendance_id]) rescue nil
+    @attendance.accept!
+    'Application Accepted' if @attendance.save
+    respond_with(@attendance)
+  end
+
+  def reject_request
+    @attendance = Attendance.find_by(id: params[:attendance_id]) rescue nil
+    @attendance.reject!
+    'Application Rejected' if @attendance.save
+    respond_with(@attendance)
   end
 
   private
