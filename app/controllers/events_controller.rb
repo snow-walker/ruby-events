@@ -85,6 +85,10 @@ class EventsController < ApplicationController
      #format.html { redirect_to @event, notice: 'Rejected.'}
   end
 
+  def my_events
+    @events = current_user.organized_events
+  end
+
   private
     def set_event
       #@event = Event.find(params[:id])
