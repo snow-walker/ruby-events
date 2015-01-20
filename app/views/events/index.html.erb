@@ -20,8 +20,8 @@
     <% @events.each do |event| %>
       <tr>
         <td><%= event.title %></td>
-        <td><%=  event.start_date %></td>
-        <td><%=  event.end_date %></td>
+        <td><%= l event.start_date, :format => :date_format %></td>
+        <td><%=  l event.end_date , :format => :date_format%></td>
 
         <td><%= event.location %></td>
         <td><%= event.agenda %></td>
